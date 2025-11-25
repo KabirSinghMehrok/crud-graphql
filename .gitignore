@@ -1,0 +1,16 @@
+# Dependencies
+frontend/node_modules
+backend/node_modules
+frontend/yarn.lock
+backend/yarn.lock
+frontend/package-lock.json
+backend/package-lock.json
+
+# Build
+frontend/build
+
+# Editor
+.vscode
+
+# Other
+.DS_Store
