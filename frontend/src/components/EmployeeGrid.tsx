@@ -5,72 +5,98 @@ import type { Employee } from '../types';
 interface EmployeeGridProps {
   employees: Employee[];
   onSelect: (employee: Employee) => void;
+  onEdit: (employee: Employee) => void;
 }
 
-const EmployeeGrid: React.FC<EmployeeGridProps> = ({ employees, onSelect }) => {
+const EmployeeGrid: React.FC<EmployeeGridProps> = ({ employees, onSelect, onEdit }) => {
   return (
-    <div className="rounded-xl border border-border overflow-x-auto shadow-sm bg-surface">
-      <table className="w-full border-collapse min-w-[1000px]">
-        <thead>
-          <tr className="bg-slate-50 border-b border-border">
-            <th className="px-4 py-3 text-left font-semibold text-slate-500 text-sm">ID</th>
-            <th className="px-4 py-3 text-left font-semibold text-slate-500 text-sm">Name</th>
-            <th className="px-4 py-3 text-left font-semibold text-slate-500 text-sm">Age</th>
-            <th className="px-4 py-3 text-left font-semibold text-slate-500 text-sm">Class</th>
-            <th className="px-4 py-3 text-left font-semibold text-slate-500 text-sm">Subjects</th>
-            <th className="px-4 py-3 text-left font-semibold text-slate-500 text-sm">Attendance</th>
-            <th className="px-4 py-3 text-left font-semibold text-slate-500 text-sm">Role</th>
-            <th className="px-4 py-3 text-left font-semibold text-slate-500 text-sm">Status</th>
-            <th className="px-4 py-3 text-left font-semibold text-slate-500 text-sm">Joined</th>
-            <th className="px-4 py-3 text-left font-semibold text-slate-500 text-sm">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {employees.map((employee) => (
-            <tr
-              key={employee.id}
-              className="border-b border-border hover:bg-slate-50 transition-colors cursor-pointer group"
-              onClick={() => onSelect(employee)}
-            >
-              <td className="px-4 py-3 text-sm text-slate-500 font-mono">{employee.id.slice(0, 8)}...</td>
-              <td className="px-4 py-3 font-medium text-slate-900">{employee.name}</td>
-              <td className="px-4 py-3 text-slate-700">{employee.age}</td>
-              <td className="px-4 py-3">
-                <span className="bg-indigo-50 text-indigo-600 px-2.5 py-0.5 rounded-full text-xs font-semibold">
-                  {employee.class}
-                </span>
-              </td>
-              <td className="px-4 py-3 text-sm text-slate-500">
-                {employee.subjects.slice(0, 2).join(', ')}{employee.subjects.length > 2 ? '...' : ''}
-              </td>
-              <td className="px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full ${employee.attendance > 90 ? 'bg-emerald-500' : 'bg-amber-500'}`}
-                      style={{ width: `${Math.min(employee.attendance, 100)}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-sm font-medium text-slate-600">{employee.attendance}%</span>
-                </div>
-              </td>
-              <td className="px-4 py-3 capitalize text-slate-700">{employee.role || 'Employee'}</td>
-              <td className="px-4 py-3">
-                <div className="flex items-center text-slate-700 text-sm">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
-                  Active
-                </div>
-              </td>
-              <td className="px-4 py-3 text-sm text-slate-500">2023-01-15</td>
-              <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                <button className="btn btn-icon btn-ghost opacity-0 group-hover:opacity-100 transition-opacity">
-                  <MoreHorizontal size={18} />
-                </button>
-              </td>
+    <div className="bg-surface rounded-xl border border-border shadow-sm overflow-hidden animate-fade-in">
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-slate-50 border-b border-border">
+              <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</th>
+              <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">ID</th>
+              <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Age</th>
+              <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Class</th>
+              <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Subjects</th>
+              <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Attendance</th>
+              <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+              <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {employees.map((emp) => (
+              <tr
+                key={emp.id}
+                className="hover:bg-slate-50 transition-colors cursor-pointer group"
+                onClick={() => onSelect(emp)}
+              >
+                <td className="p-4">
+                  <div className="font-medium text-slate-900">{emp.name}</div>
+                  <div className="text-xs text-slate-500 capitalize">{emp.role || 'Employee'}</div>
+                </td>
+                <td className="p-4 font-mono text-xs text-slate-500">{emp.id}</td>
+                <td className="p-4 text-slate-700">{emp.age}</td>
+                <td className="p-4 text-slate-700">{emp.class}</td>
+                <td className="p-4">
+                  <div className="flex flex-wrap gap-1">
+                    {emp.subjects.slice(0, 2).map(sub => (
+                      <span key={sub} className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-xs border border-slate-200">
+                        {sub}
+                      </span>
+                    ))}
+                    {emp.subjects.length > 2 && (
+                      <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-xs border border-slate-200">
+                        +{emp.subjects.length - 2}
+                      </span>
+                    )}
+                  </div>
+                </td>
+                <td className="p-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${emp.attendance > 90 ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                        style={{ width: `${Math.min(emp.attendance, 100)}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-xs font-medium text-slate-600">{emp.attendance}%</span>
+                  </div>
+                </td>
+                <td className="p-4">
+                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${emp.attendance > 90
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                      : 'bg-amber-50 text-amber-700 border border-amber-200'
+                    }`}>
+                    {emp.attendance > 90 ? 'Excellent' : 'Average'}
+                  </span>
+                </td>
+                <td className="p-4 text-right" onClick={e => e.stopPropagation()}>
+                  <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
+                      onClick={(e) => { e.stopPropagation(); onEdit(emp); }}
+                      title="Edit"
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button className="p-1.5 text-slate-400 hover:text-warning hover:bg-warning/10 rounded-md transition-colors" title="Flag">
+                      <Flag size={16} />
+                    </button>
+                    <button className="p-1.5 text-slate-400 hover:text-danger hover:bg-danger/10 rounded-md transition-colors" title="Delete">
+                      <Trash2 size={16} />
+                    </button>
+                    <button className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors">
+                      <MoreHorizontal size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
